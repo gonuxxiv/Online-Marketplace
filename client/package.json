@@ -1,0 +1,45 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
+    "@material-ui/core": "^5.0.0-beta.5",
+    "@material-ui/styles": "^4.11.4",
+    "@mui/icons-material": "^5.1.1",
+    "@mui/material": "^5.1.1",
+    "axios": "^0.24.0",
+    "isarray": "^2.0.5",
+    "js-cookie": "^3.0.1",
+    "moment": "^2.29.1",
+    "next": "12.0.2",
+    "prop-types": "^15.7.2",
+    "react": "17.0.2",
+    "react-cookie": "^4.1.1",
+    "react-dom": "17.0.2",
+    "react-hook-form": "^7.19.1",
+    "react-hot-toast": "^2.1.1",
+    "react-markdown": "^7.1.0",
+    "react-quill": "^2.0.0-beta.4",
+    "react-table": "^7.7.0",
+    "rehype-raw": "^6.1.0",
+    "styled-components": "^5.3.3",
+    "styled-normalize": "^8.0.7",
+    "swagger-ui-react": "^4.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-next": "^12.0.3",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react-hooks": "^4.2.1-alpha-a44a7a2a3-20211111",
+    "prettier": "^2.4.1"
+  }
+}

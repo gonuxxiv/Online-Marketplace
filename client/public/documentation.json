@@ -1,0 +1,939 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is the documentation of Marketplace Server in COMP 4537 Term Project T3",
+    "version": "1.0.1",
+    "title": "Marketplace Server",
+    "contact": {
+      "email": "skystar505836915@gmail.com"
+    }
+  },
+  "host": "/",
+  "servers": [
+    {
+      "url": "https://marketserver.cacodehunter.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Admin": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Endpoint": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "DELETE", "PUT", "PATCH"]
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "profile": {
+            "type": "string"
+          }
+        }
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isValid": {
+            "type": "boolean"
+          },
+          "category": {
+            "type": "string"
+          },
+          "user": {
+            "type": "string"
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminSignupResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminLoginResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "UserSignupResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "UserLoginResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "InvalidCredential": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Invalid Credential"
+          }
+        }
+      },
+      "ServerInterval": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "oops, server has some problems"
+          }
+        }
+      },
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "missing some params"
+          }
+        }
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "result not found!"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "bearerFormat": "JWT"
+    }
+  },
+  "tags": [
+    {
+      "name": "admin",
+      "description": "Everything about Marketplace"
+    },
+    {
+      "name": "endpoint",
+      "description": "All API Endpoint"
+    },
+    {
+      "name": "user",
+      "description": "Operations about user"
+    },
+    {
+      "name": "item",
+      "description": "Access to marketplace item"
+    },
+    {
+      "name": "category",
+      "description": "category of item"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/admin/signup": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "create an admin account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/AdminSignupResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid username/password supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Interval Server Problem",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "oops Server gets some problems"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/login": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "login to admin account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username", "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/AdminLoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid username/password supplied",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Interval Problem",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/endpoint": {
+      "get": {
+        "tags": [
+          "endpoint"
+        ],
+        "summary": "Get All the endpoints",
+        "description": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success to get all endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Endpoint"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is invalid or expired!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bearer token is not provided or server has problem",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/signup": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Create a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username", "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "aaa@gmail.com"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "user"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/UserSignupResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid username/password supplied",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Interval Problem",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Logs user into the system",
+        "description": "",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username", "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "aaa@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/UserLoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid username/password supplied",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Interval Problem",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get Current user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid username/password supplied",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Interval Problem",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/item": {
+      "get": {
+        "tags": [
+          "item"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Get All Valid Item",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Item"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Interval Problem",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Add One Item",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "car"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "example": 1000
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "<p>I am a car~</p>"
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "Car"
+                  },
+                  "image": {
+                    "type": "string",
+                    "example": "https://p3.itc.cn/images01/20201024/d9b75967f1ae4c03a5817423bacbfb38.jpeg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "item": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/Item"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing params",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing Bearer Token in header or Bearer Token Expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server has some problems",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/item/{id}": {
+      "get": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Get Item By Item Id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "6196124b9052dfab40f0a5f4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "item": {
+                      "$ref": "#/components/schemas/Item"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "item"
+        ],
+        "summary": "Delete Item By Item Id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "6196124b9052dfab40f0a5f4"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "success"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Owner Id doesn't match Deleter Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/InvalidCredential"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Item does not exist or delete failed!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "hey! we can not delete this item"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category": {
+      "get": {
+        "tags": [
+          "category"
+        ],
+        "description": "Get All Categories",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "$ref": "#/components/schemas/Category"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Interval Problem",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "$ref": "#/components/schemas/ServerInterval"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
